@@ -27,4 +27,6 @@ extend type Mutation {
     username: String!
     password: String!
   ): LoginDetails!
+
+  logoutUser: String!
 }

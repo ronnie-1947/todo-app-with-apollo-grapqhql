@@ -91,14 +91,14 @@ export const loginUser = async ({ username, password }, ctx) => {
   }
 }
 
-export const logutUser = async (ctx) => {
+export const logutUser = async ({res}) => {
   try {
-
     // Clear cookie
     res.clearCookie('_sid')
     return 'success logout'
 
   } catch (error) {
+    console.error(error)
     throw error
   }
 }
