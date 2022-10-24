@@ -3,7 +3,7 @@ import path from 'path'
 import bcrypt from 'bcrypt'
 import uniqid from 'uniqid'
 
-import {createToken} from '../../utils/jwt.js'
+import { createToken } from '../../utils/jwt.js'
 
 const filePath = path.join(process.cwd(), 'database', 'user.json')
 
@@ -24,19 +24,20 @@ const writeUsers = (data) => {
   }
 }
 
-export const getMe = async () => {
-  const me = {
-    username: 'lahori',
-    email: 'lahori@strapi.com',
-    firstName: 'laho',
-    lastName: 'ri'
-  }
+export const getMe = async (ctx) => {
 
-  return me
+  try {
+    if(ctx?.user) return ctx.user
+    throw new Error('You are not logged in')
+    
+  } catch (error) {
+    throw error
+  }
 }
 
 export const registerUser = async (args) => {
   try {
+    
     // Read users from database
     const ud = await readUsers()
     if (!Array.isArray(ud) || ud === '') ud = []
@@ -79,12 +80,23 @@ export const loginUser = async ({ username, password }, ctx) => {
     const jwtToken = createToken(sanitizedUser)
 
     // Send Token via cookie
-    ctx.res.cookie('_sid', jwtToken, {maxAge:1000*60*60, httpOnly:true})
+    ctx.res.cookie('_sid', jwtToken, { maxAge: 1000 * 60 * 60, httpOnly: true })
 
     // Return to graphql
     return {
       token: jwtToken
     }
+  } catch (error) {
+    throw error
+  }
+}
+
+export const logutUser = async (ctx) => {
+  try {
+
+    // Clear cookie
+    res.clearCookie('_sid')
+    return 'success logout'
 
   } catch (error) {
     throw error
