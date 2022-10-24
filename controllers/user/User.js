@@ -3,6 +3,8 @@ import path from 'path'
 import bcrypt from 'bcrypt'
 import uniqid from 'uniqid'
 
+import {createToken} from '../../utils/jwt.js'
+
 const filePath = path.join(process.cwd(), 'database', 'user.json')
 
 const readUsers = () => {
@@ -40,9 +42,7 @@ export const registerUser = async (args) => {
     if (!Array.isArray(ud) || ud === '') ud = []
 
     // Check if email or username exists
-    const checkExistance = ud.filter(
-      (user) => user.email === args.email || user.username === args.username
-    )
+    const checkExistance = ud.filter((user) => user.email === args.email || user.username === args.username)
     if (checkExistance.length > 0) throw new Error('User already exist')
 
     // Hash password
@@ -54,7 +54,38 @@ export const registerUser = async (args) => {
 
     // Return new user
     return newUser
-    
+  } catch (error) {
+    throw error
+  }
+}
+
+export const loginUser = async ({ username, password }, ctx) => {
+  try {
+    // Read users from database
+    const ud = await readUsers()
+    if (!Array.isArray(ud) || ud === '') ud = []
+
+    // Check if email or username exists
+    const user = ud.find((user) => user.email === username || user.username === username)
+    if (!user) throw new Error('Invalid Username or Password')
+
+    // Check password
+    const checkPass = await bcrypt.compare(password, user.password)
+    if (!checkPass) throw new Error('Invalid Username or Password')
+
+    // Create JWT Token
+    const sanitizedUser = { ...user }
+    delete sanitizedUser.password
+    const jwtToken = createToken(sanitizedUser)
+
+    // Send Token via cookie
+    ctx.res.cookie('_sid', jwtToken, {maxAge:1000*60*60, httpOnly:true})
+
+    // Return to graphql
+    return {
+      token: jwtToken
+    }
+
   } catch (error) {
     throw error
   }

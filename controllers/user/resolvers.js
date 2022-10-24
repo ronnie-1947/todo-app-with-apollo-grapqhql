@@ -7,6 +7,7 @@ export default {
   },
 
   Mutation: {
-    registerUser: async (_, args) => await User.registerUser(args)
+    registerUser: async (_, args) => await User.registerUser(args),
+    loginUser: async (_, args, ctx) => await User.loginUser(args, ctx)
   }
 }

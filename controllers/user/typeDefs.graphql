@@ -6,6 +6,10 @@ type User {
   lastName: String!
 }
 
+type LoginDetails {
+  token: String!
+}
+
 extend type Query {
   me: User
 }
@@ -18,4 +22,9 @@ extend type Mutation {
     firstName: String!
     lastName: String!
   ): User!
+
+  loginUser(
+    username: String!
+    password: String!
+  ): LoginDetails!
 }
