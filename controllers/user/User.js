@@ -27,8 +27,15 @@ const writeUsers = (data) => {
 export const getMe = async (ctx) => {
 
   try {
-    if(ctx?.user) return ctx.user
-    throw new Error('You are not logged in')
+    // Check if you are logged in
+    if(!ctx?.user) throw new Error('You are not logged in')
+
+    // Find user in database
+    const ud = await readUsers()
+    const me = ud.find(c=> c.id === ctx.user.id)
+    
+    // Return 200 response
+    return me
     
   } catch (error) {
     throw error
@@ -99,6 +106,33 @@ export const logutUser = async ({res}) => {
 
   } catch (error) {
     console.error(error)
+    throw error
+  }
+}
+
+
+export const editUser = async (args, ctx)=> {
+  try {
+
+    // Check Authentication
+    if(!ctx.user) throw new Error('You are not logged in')
+
+    // Read users database & find index of the user
+    const ud = await readUsers()
+    const userIndex = ud.findIndex(c=>c.id===ctx.user.id)
+
+    // Modify user array
+    const modifiedUser = {...ud[userIndex], ...args}
+
+    // Save database
+    ud[userIndex] = modifiedUser
+    console.log (ud)
+    writeUsers(ud)
+
+    // Return 200 success message
+    return modifiedUser
+    
+  } catch (error) {
     throw error
   }
 }

@@ -9,6 +9,7 @@ export default {
   Mutation: {
     registerUser: async (_, args) => await User.registerUser(args),
     loginUser: async (_, args, ctx) => await User.loginUser(args, ctx),
-    logoutUser: async (_, args, ctx) => await User.logutUser(ctx)
+    logoutUser: async (_, args, ctx) => await User.logutUser(ctx),
+    editUser: async (_, args, ctx)=> await User.editUser(args, ctx)
   }
 }
