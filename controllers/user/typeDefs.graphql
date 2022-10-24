@@ -29,4 +29,10 @@ extend type Mutation {
   ): LoginDetails!
 
   logoutUser: String!
+
+  editUser(
+    email: String
+    firstName: String
+    lastName: String
+  ): User!
 }
