@@ -1,3 +1,4 @@
-import helloFriend from '../controllers/helloFriend/resolver.js'
+import helloFriend from '../controllers/helloFriend/resolvers.js'
+import user from '../controllers/user/resolvers.js'
 
-export default [helloFriend]
+export default [helloFriend, user]

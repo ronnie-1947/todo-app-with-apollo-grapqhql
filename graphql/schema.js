@@ -6,5 +6,6 @@ const basePath = path.join(__dirname, '..', 'controllers')
 
 const base = fs.readFileSync(`${basePath}/base/typeDefs.graphql`, 'utf-8')
 const helloFriend = fs.readFileSync(`${basePath}/helloFriend/typeDefs.graphql`, 'utf-8')
+const user = fs.readFileSync(`${basePath}/user/typeDefs.graphql`, 'utf-8')
 
-export default [base, helloFriend]
+export default [base, helloFriend, user]
