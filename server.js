@@ -4,6 +4,7 @@ import ApolloServer from 'apollo-server-express'
 import cookieParser from 'cookie-parser'
 import path from 'path'
 
+import {verifyJwt} from './utils/jwt.js'
 import { resolvers, typeDefs } from './graphql/index.js'
 
 dotenv.config()
@@ -14,14 +15,15 @@ const graphqlServer = new ApolloServer.ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => {
-    const authCookies = req.cookies['token']
-      ? `Bearer ${req.cookies['token']}`
+    const authCookies = req.cookies['_sid']
+      ? `Bearer ${req.cookies['_sid']}`
       : ''
-    const auth = req.headers.authorization || authCookies || ''
+    const authToken = req.headers.authorization || authCookies || ''
+    const decodedToken = authToken? verifyJwt(authToken.split('Bearer ')[1]):null
     const device = req.headers['x-device-type']
-
+    
     return {
-      auth,
+      user: decodedToken,
       res,
       req,
       device
@@ -40,7 +42,7 @@ graphqlServer.applyMiddleware({ app, path: '/graphql' })
 
 // Start server
 const server = app.listen(process.env.PORT || 5000, () => {
-  console.log(`server running in http://localhost:${process.env?.PORT || 5000}`)
+  console.log(`server running in http://localhost:${process.env?.PORT || 5000}/graphql`)
 })
 
 // Handle unhandled promise rejections
