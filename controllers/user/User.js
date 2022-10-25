@@ -1,28 +1,12 @@
-import fs from 'fs'
 import path from 'path'
 import bcrypt from 'bcrypt'
 import uniqid from 'uniqid'
 
 import { createToken } from '../../utils/jwt.js'
+import {readFile, writeFile} from '../../utils/__fileSystem.js'
 
 const filePath = path.join(process.cwd(), 'database', 'user.json')
 
-const readUsers = () => {
-  try {
-    const data = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(data)
-  } catch (error) {
-    throw new Error('Database reading failed')
-  }
-}
-
-const writeUsers = (data) => {
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data))
-  } catch (error) {
-    throw new Error('Writing to database failed')
-  }
-}
 
 export const getMe = async (ctx) => {
 
@@ -31,7 +15,7 @@ export const getMe = async (ctx) => {
     if(!ctx?.user) throw new Error('You are not logged in')
 
     // Find user in database
-    const ud = await readUsers()
+    const ud = await readFile(filePath)
     const me = ud.find(c=> c.id === ctx.user.id)
     
     // Return 200 response
@@ -46,7 +30,7 @@ export const registerUser = async (args) => {
   try {
     
     // Read users from database
-    const ud = await readUsers()
+    const ud = await readFile(filePath)
     if (!Array.isArray(ud) || ud === '') ud = []
 
     // Check if email or username exists
@@ -58,7 +42,7 @@ export const registerUser = async (args) => {
 
     // Save new user
     const newUser = { id: uniqid(), ...args, password: hashedPass }
-    writeUsers([...ud, newUser])
+    writeFile(filePath, [...ud, newUser])
 
     // Return new user
     return newUser
@@ -70,7 +54,7 @@ export const registerUser = async (args) => {
 export const loginUser = async ({ username, password }, ctx) => {
   try {
     // Read users from database
-    const ud = await readUsers()
+    let ud = await readFile(filePath)
     if (!Array.isArray(ud) || ud === '') ud = []
 
     // Check if email or username exists
@@ -118,7 +102,7 @@ export const editUser = async (args, ctx)=> {
     if(!ctx.user) throw new Error('You are not logged in')
 
     // Read users database & find index of the user
-    const ud = await readUsers()
+    const ud = await readFile(filePath)
     const userIndex = ud.findIndex(c=>c.id===ctx.user.id)
 
     // Modify user array
@@ -126,8 +110,7 @@ export const editUser = async (args, ctx)=> {
 
     // Save database
     ud[userIndex] = modifiedUser
-    console.log (ud)
-    writeUsers(ud)
+    writeFile(filePath, ud)
 
     // Return 200 success message
     return modifiedUser

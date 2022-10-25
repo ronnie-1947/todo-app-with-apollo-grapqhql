@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(5).toString('hex
 export const createToken = (data) => {
   try {
     const token = jwt.sign(data, JWT_SECRET, {
-      expiresIn: '1h'
+      expiresIn: '24h'
     })
     return token
   } catch (error) {

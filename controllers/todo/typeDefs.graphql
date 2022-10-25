@@ -1,0 +1,19 @@
+type Todo {
+  id: ID!
+  task: String!
+  completed: Boolean!
+  createdAt: String!
+  userId: ID!
+  user: User!
+}
+
+# extend type Query {
+  
+# }
+
+extend type Mutation {
+  createTask(
+    task: String!
+  ): Todo
+}
+
