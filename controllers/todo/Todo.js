@@ -33,3 +33,55 @@ export const createTask = async (args, { user }) => {
     throw error
   }
 }
+
+export const getMyTasks = async ({page = 1, limit = 15},{user})=>{
+  try {
+
+    // Validate User
+    if (!user) throw new Error('You are not logged in')
+
+    // Read Todo File and get tasks
+    const td = readFile(filePath)
+    const requiredTasks = td.filter(c=>c.userId === user.id)
+
+    // Modify result
+    const startIndx = (page-1)*limit
+    const endIndx = startIndx+limit-1
+
+    const finalTaskList = requiredTasks.filter((c,i)=> i>=startIndx && i<=endIndx)
+    
+    // Return Tasks
+    return finalTaskList
+    
+  } catch (error) {
+    throw error
+  }
+}
+
+export const modifyCompletion = async (args, {user})=>{
+  try {
+    // Validate User
+    if (!user) throw new Error('You are not logged in')
+  
+    // Read Todo File and get tasks
+    const td = readFile(filePath)
+  
+    // Get specific task
+    const taskId = td.findIndex(t=> t.id === args.taskId)
+    const task = {...td[taskId]}
+  
+    // Check user authorization
+    if(task.userId !== user.id) throw new Error('You are not authorized to make changes')
+  
+    // Modify task
+    task.completed = !task.completed
+    td[taskId] = task
+    writeFile(filePath, td)
+  
+    // Get 200 successful
+    return task
+    
+  } catch (error) {
+    throw error
+  }
+}
