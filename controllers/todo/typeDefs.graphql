@@ -22,5 +22,10 @@ extend type Mutation {
   modifyCompletion(
     taskId: ID!
   ): Todo
+
+  editTask(
+    taskId: ID!
+    task: String!
+  ): Todo
 }
 
