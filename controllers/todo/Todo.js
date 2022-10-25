@@ -63,15 +63,16 @@ export const modifyCompletion = async (args, { user }) => {
     const td = readFile(filePath)
 
     // Get specific task
-    const taskId = td.findIndex((t) => t.id === args.taskId)
-    const task = { ...td[taskId] }
+    const taskIndx = td.findIndex((t) => t.id === args.taskId)
+    
+    const task = { ...td[taskIndx] }
 
     // Check user authorization
     if (task.userId !== user.id) throw new Error('You are not authorized to make changes')
 
     // Modify task
     task.completed = !task.completed
-    td[taskId] = task
+    td[taskIndx] = task
     writeFile(filePath, td)
 
     // Get 200 successful
@@ -90,18 +91,49 @@ export const updateTask = async (args, { user }) => {
     const td = readFile(filePath)
 
     // Get specific task
-    const taskId = td.findIndex((t) => t.id === args.taskId)
-    const task = { ...td[taskId] }
+    const taskIndx = td.findIndex((t) => t.id === args.taskId)
+    const task = { ...td[taskIndx] }
 
     // Check user authorization
     if (task.userId !== user.id) throw new Error('You are not authorized to make changes')
 
     // Modify task
     task.task = args.task
-    td[taskId] = task
+    td[taskIndx] = task
     writeFile(filePath, td)
 
     // Get 200 successful
     return task
-  } catch (error) {}
+  } catch (error) {
+    throw error
+  }
+}
+
+
+export const deleteTask = async (args, {user})=> {
+  try {
+
+    // Validate User
+    if (!user) throw new Error('You are not logged in')
+
+    // Read Todo File and get tasks
+    const td = readFile(filePath)
+
+    // Get specific task
+    const taskIndx = td.findIndex((t) => t.id === args.taskId)
+    const task = { ...td[taskIndx] }
+
+    // Check user authorization
+    if (task.userId !== user.id) throw new Error('You are not authorized to make changes')
+
+    // Filter and update task
+    td.splice(taskIndx, 1)
+    writeFile(filePath, td)
+
+    // Return 200 success
+    return 'successful'
+    
+  } catch (error) {
+    throw error
+  }
 }
