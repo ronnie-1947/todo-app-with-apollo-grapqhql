@@ -42,9 +42,9 @@ await graphqlServer.start()
 graphqlServer.applyMiddleware({ app, path: '/graphql' })
 
 // Start server
-const server = app.listen(process.env.PORT || 5000, () => {
+const server = app.listen(process.env.PORT || 3737, () => {
   makeDB()
-  console.log(`server running in http://localhost:${process.env?.PORT || 5000}/graphql`)
+  console.log(`server running in http://localhost:${process.env?.PORT || 3737}/graphql`)
 })
 
 // Handle unhandled promise rejections
