@@ -7,13 +7,20 @@ type Todo {
   user: User!
 }
 
-# extend type Query {
-  
-# }
+extend type Query {
+  getMyTasks(
+    page: Int
+    limit: Int
+  ): [Todo]!
+}
 
 extend type Mutation {
   createTask(
     task: String!
+  ): Todo
+
+  modifyCompletion(
+    taskId: ID!
   ): Todo
 }
 
