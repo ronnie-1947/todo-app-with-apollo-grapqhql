@@ -27,5 +27,9 @@ extend type Mutation {
     taskId: ID!
     task: String!
   ): Todo
+
+  deleteTask(
+    taskId:ID!
+  ): String!
 }
 

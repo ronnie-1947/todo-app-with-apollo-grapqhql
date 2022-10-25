@@ -9,6 +9,7 @@ export default {
   Mutation: {
     createTask: async (_, args, ctx)=> Todo.createTask(args, ctx),
     modifyCompletion: async (_, args, ctx)=> Todo.modifyCompletion(args, ctx),
-    editTask: async (_, args, ctx)=> Todo.updateTask(args, ctx)
+    editTask: async (_, args, ctx)=> Todo.updateTask(args, ctx),
+    deleteTask: async (_, args, ctx) => Todo.deleteTask(args, ctx)
   }
 }
