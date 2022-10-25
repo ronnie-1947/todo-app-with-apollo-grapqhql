@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import path from 'path'
 
 import {verifyJwt} from './utils/jwt.js'
+import {makeDB} from './utils/__fileSystem.js'
 import { resolvers, typeDefs } from './graphql/index.js'
 
 dotenv.config()
@@ -42,6 +43,7 @@ graphqlServer.applyMiddleware({ app, path: '/graphql' })
 
 // Start server
 const server = app.listen(process.env.PORT || 5000, () => {
+  makeDB()
   console.log(`server running in http://localhost:${process.env?.PORT || 5000}/graphql`)
 })
 
